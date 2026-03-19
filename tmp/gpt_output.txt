@@ -1,0 +1,27 @@
+GPT signature: b'\x00\x00\x00\x00\x00\x00\x00\x00'
+Entries start LBA: 0, count: 0, entry size: 0
+
+=== GUID in PE binary at 0x69BE0 (used by ReadWritePartition) ===
+  Raw: 91ff5e8eb621d347af2bc15a01e020ec
+  Formatted: 8E5EFF91-21B6-47D3-AF2B-C15A01E020EC
+
+  GUID at 0x69C10: e2dc8ed614a37b45962a1d99bbfcbbfb
+  Formatted: D68EDCE2-A314-457B-962A-1D99BBFCBBFB
+
+=== GUID COMPARISON ===
+
+=== Search PE for devinfo unique GUID ===
+
+=== ReadWritePartition 0x18248 — GUID usage ===
+  0x18270: ADRP x8, 0x6A000
+  0x18288: ADRP x0, 0x69000
+  0x18290: ADRP+ADD → 0x1BEBE0
+  0x182CC: ADRP+ADD → 0x51C05
+  0x18314: ADRP+ADD → 0x596F8
+  0x18378: ADRP x8, 0x6A000
+  0x18390: ADRP x0, 0x69000
+  0x18398: ADRP+ADD → 0x1BEC10
+  0x183D4: ADRP+ADD → 0x59714
+  0x183E4: ADRP+ADD → 0x59A1C
+
+Done.

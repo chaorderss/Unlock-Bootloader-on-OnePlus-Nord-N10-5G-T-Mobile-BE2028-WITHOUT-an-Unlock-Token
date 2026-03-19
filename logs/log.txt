@@ -1,0 +1,35 @@
+Timed out
+Timed out
+Timed out
+Timed out
+Timed out
+Timed out
+Timed out
+Timed out
+Timed out
+Timed out
+['  File "/Library/Frameworks/Python.framework/Versions/3.14/bin/edl", line 4, in <module>\n    runpy.run_path(\'/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py\', run_name=\'__main__\')\n', '  File "<frozen runpy>", line 287, in run_path\n', '  File "<frozen runpy>", line 98, in _run_module_code\n', '  File "<frozen runpy>", line 88, in _run_code\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py", line 411, in <module>\n    base.run()\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py", line 305, in run\n    conninfo = self.doconnect(loop)\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py", line 232, in doconnect\n    resp = self.sahara.connect()\n']
+TX:<?xml version="1.0" ?><data><nop /></data>
+read:0x10
+['  File "/Library/Frameworks/Python.framework/Versions/3.14/bin/edl", line 4, in <module>\n    runpy.run_path(\'/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py\', run_name=\'__main__\')\n', '  File "<frozen runpy>", line 287, in run_path\n', '  File "<frozen runpy>", line 98, in _run_module_code\n', '  File "<frozen runpy>", line 88, in _run_code\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py", line 411, in <module>\n    base.run()\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py", line 305, in run\n    conninfo = self.doconnect(loop)\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py", line 232, in doconnect\n    resp = self.sahara.connect()\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/Library/sahara.py", line 136, in connect\n    res = self.cdc.read(timeout=1)\n']
+RX:04000000100000000000000001000000
+['  File "/Library/Frameworks/Python.framework/Versions/3.14/bin/edl", line 4, in <module>\n    runpy.run_path(\'/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py\', run_name=\'__main__\')\n', '  File "<frozen runpy>", line 287, in run_path\n', '  File "<frozen runpy>", line 98, in _run_module_code\n', '  File "<frozen runpy>", line 88, in _run_code\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py", line 411, in <module>\n    base.run()\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py", line 388, in run\n    sc.handle_streaming(cmd, options)\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/Library/streaming_client.py", line 83, in handle_streaming\n    if self.streaming.connect(mode):\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/Library/streaming.py", line 783, in connect\n    resp = self.send(cmdbuf, True)\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/Library/streaming.py", line 1000, in send\n    return self.hdlc.send_cmd_np(cmd, nocrc)\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/Library/hdlc.py", line 232, in send_cmd_np\n    return self.send_cmd_base(outdata, 0, nocrc)\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/Library/hdlc.py", line 221, in send_cmd_base\n    if self.send_unframed_buf(packet, prefixflag):\n']
+TX:11001200a0e30000c1e50140a0e31eff2fe14bd97e
+read:0x10
+['  File "/Library/Frameworks/Python.framework/Versions/3.14/bin/edl", line 4, in <module>\n    runpy.run_path(\'/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py\', run_name=\'__main__\')\n', '  File "<frozen runpy>", line 287, in run_path\n', '  File "<frozen runpy>", line 98, in _run_module_code\n', '  File "<frozen runpy>", line 88, in _run_code\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py", line 411, in <module>\n    base.run()\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/edl.py", line 388, in run\n    sc.handle_streaming(cmd, options)\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/Library/streaming_client.py", line 83, in handle_streaming\n    if self.streaming.connect(mode):\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/Library/streaming.py", line 783, in connect\n    resp = self.send(cmdbuf, True)\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/Library/streaming.py", line 1000, in send\n    return self.hdlc.send_cmd_np(cmd, nocrc)\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/Library/hdlc.py", line 232, in send_cmd_np\n    return self.send_cmd_base(outdata, 0, nocrc)\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/Library/hdlc.py", line 223, in send_cmd_base\n    return self.receive_reply_nocrc()\n', '  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/edlclient/Library/hdlc.py", line 177, in receive_reply_nocrc\n    tmp = self.cdc.read(timeout=timeout)\n']
+RX:04000000100000000000000001000000
+Timed out
+Timed out
+Timed out
+Timed out
+Timed out
+Timed out
+Timed out
+USBError(5, 'Input/Output Error')
+USBError(32, 'Pipe error')
+USBError(32, 'Pipe error')
+USBError(32, 'Pipe error')
+USBError(32, 'Pipe error')
+USBError(32, 'Pipe error')
+USBError(32, 'Pipe error')
+USBError(32, 'Pipe error')

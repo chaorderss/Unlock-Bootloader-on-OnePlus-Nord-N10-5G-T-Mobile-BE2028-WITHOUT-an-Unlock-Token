@@ -1,0 +1,2 @@
+Found ANDROID-BOOT! in 1 locations:
+  lun4/devinfo.bin @ 0x0 (size=4096) unlocked=0x00 charger=0x01 verity=0x01
