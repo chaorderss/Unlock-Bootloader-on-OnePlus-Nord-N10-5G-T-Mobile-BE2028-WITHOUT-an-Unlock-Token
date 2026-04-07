@@ -1,0 +1,1 @@
+cmd_/work/wlan_probe.ko := aarch64-linux-gnu-ld -r  -EL  -maarch64elf -T ./scripts/module-common.lds -T ./arch/arm64/kernel/module.lds  --build-id  -o /work/wlan_probe.ko /work/wlan_probe.o /work/wlan_probe.mod.o ;  true

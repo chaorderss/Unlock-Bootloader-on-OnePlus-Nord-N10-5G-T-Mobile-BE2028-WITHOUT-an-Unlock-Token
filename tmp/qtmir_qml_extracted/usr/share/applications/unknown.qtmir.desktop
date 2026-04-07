@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Unknown app
+Exec=/usr/bin/true
+Icon=unknown.qtmir
+NoDisplay=true
+X-Lomiri-Application-ID=unknown.qtmir
+X-Lomiri-Splash-Show=false

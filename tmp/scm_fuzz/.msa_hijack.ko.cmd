@@ -1,0 +1,1 @@
+cmd_/work/msa_hijack.ko := aarch64-linux-gnu-ld -r  -EL  -maarch64elf -T ./scripts/module-common.lds -T ./arch/arm64/kernel/module.lds  --build-id  -o /work/msa_hijack.ko /work/msa_hijack.o /work/msa_hijack.mod.o ;  true

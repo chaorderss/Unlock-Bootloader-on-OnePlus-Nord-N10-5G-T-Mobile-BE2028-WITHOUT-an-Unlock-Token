@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=QtMir Demo Client
+Comment=QtMir demo client
+Exec=/usr/bin/qtmir-demo-client
+Terminal=false
+Icon=
+NoDisplay=false
+X-Ubuntu-Touch=true

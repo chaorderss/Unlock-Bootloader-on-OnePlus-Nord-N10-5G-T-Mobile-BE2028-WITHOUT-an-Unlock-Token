@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+	<program SECTOR_SIZE_IN_BYTES="4096" file_sector_offset="0" filename="ALIGN_TO_128K_2.bin" label="ALIGN_TO_128K_2" num_partition_sectors="26" partofsingleimage="false" physical_partition_number="5" readbackverify="false" size_in_KB="104.0" sparse="false" start_byte_hex="0x6000" start_sector="6" />
+	<program SECTOR_SIZE_IN_BYTES="4096" file_sector_offset="0" filename="modemst1.bin" label="modemst1" num_partition_sectors="640" partofsingleimage="false" physical_partition_number="5" readbackverify="false" size_in_KB="2560.0" sparse="false" start_byte_hex="0x20000" start_sector="32" />
+	<program SECTOR_SIZE_IN_BYTES="4096" file_sector_offset="0" filename="modemst2.bin" label="modemst2" num_partition_sectors="640" partofsingleimage="false" physical_partition_number="5" readbackverify="false" size_in_KB="2560.0" sparse="false" start_byte_hex="0x2a0000" start_sector="672" />
+	<program SECTOR_SIZE_IN_BYTES="4096" file_sector_offset="0" filename="fsg.bin" label="fsg" num_partition_sectors="640" partofsingleimage="false" physical_partition_number="5" readbackverify="false" size_in_KB="2560.0" sparse="false" start_byte_hex="0x520000" start_sector="1312" />
+	<program SECTOR_SIZE_IN_BYTES="4096" file_sector_offset="0" filename="fsc.bin" label="fsc" num_partition_sectors="32" partofsingleimage="false" physical_partition_number="5" readbackverify="false" size_in_KB="128.0" sparse="false" start_byte_hex="0x7a0000" start_sector="1952" />
+	<program SECTOR_SIZE_IN_BYTES="4096" file_sector_offset="0" filename="gpt_main5.bin" label="PrimaryGPT" num_partition_sectors="6" partofsingleimage="true" physical_partition_number="5" readbackverify="false" size_in_KB="24.0" sparse="false" start_byte_hex="0x0" start_sector="0" />
+	<program SECTOR_SIZE_IN_BYTES="4096" file_sector_offset="0" filename="gpt_backup5.bin" label="BackupGPT" num_partition_sectors="5" partofsingleimage="true" physical_partition_number="5" readbackverify="false" size_in_KB="20.0" sparse="false" start_byte_hex="(4096*NUM_DISK_SECTORS)-20480." start_sector="NUM_DISK_SECTORS-5." />
+</data>

@@ -1,0 +1,9 @@
+kernel//work/scm_fuzz4.ko
+kernel//work/scm_fuzz5.ko
+kernel//work/scm_test_init.ko
+kernel//work/scm_test_qcom.ko
+kernel//work/scm_dump.ko
+kernel//work/wlan_probe.ko
+kernel//work/fuse_reader.ko
+kernel//work/msa_hijack.ko
+kernel//work/scm_pil_fuzz.ko

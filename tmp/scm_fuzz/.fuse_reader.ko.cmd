@@ -1,0 +1,1 @@
+cmd_/work/fuse_reader.ko := aarch64-linux-gnu-ld -r  -EL  -maarch64elf -T ./scripts/module-common.lds -T ./arch/arm64/kernel/module.lds  --build-id  -o /work/fuse_reader.ko /work/fuse_reader.o /work/fuse_reader.mod.o ;  true

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=X11 support
+Exec=/usr/bin/Xwayland
+Icon=xwayland.qtmir
+NoDisplay=true
+X-Lomiri-Application-ID=xwayland.qtmir
+X-Lomiri-Splash-Show=false

@@ -1,0 +1,1 @@
+cmd_/work/scm_fuzz5.ko := aarch64-linux-gnu-ld -r  -EL  -maarch64elf -T ./scripts/module-common.lds -T ./arch/arm64/kernel/module.lds  --build-id  -o /work/scm_fuzz5.ko /work/scm_fuzz5.o /work/scm_fuzz5.mod.o ;  true

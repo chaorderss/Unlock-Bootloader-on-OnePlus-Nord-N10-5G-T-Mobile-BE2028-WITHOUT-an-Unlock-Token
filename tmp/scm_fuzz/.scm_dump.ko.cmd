@@ -1,0 +1,1 @@
+cmd_/work/scm_dump.ko := aarch64-linux-gnu-ld -r  -EL  -maarch64elf -T ./scripts/module-common.lds -T ./arch/arm64/kernel/module.lds  --build-id  -o /work/scm_dump.ko /work/scm_dump.o /work/scm_dump.mod.o ;  true

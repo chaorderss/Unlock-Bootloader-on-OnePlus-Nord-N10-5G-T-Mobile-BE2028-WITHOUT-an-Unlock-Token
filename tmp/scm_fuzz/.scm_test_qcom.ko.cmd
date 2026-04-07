@@ -1,0 +1,1 @@
+cmd_/work/scm_test_qcom.ko := aarch64-linux-gnu-ld -r  -EL  -maarch64elf -T ./scripts/module-common.lds -T ./arch/arm64/kernel/module.lds  --build-id  -o /work/scm_test_qcom.ko /work/scm_test_qcom.o /work/scm_test_qcom.mod.o ;  true

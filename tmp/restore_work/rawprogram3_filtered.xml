@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+	<program SECTOR_SIZE_IN_BYTES="4096" file_sector_offset="0" filename="ALIGN_TO_128K_1.bin" label="ALIGN_TO_128K_1" num_partition_sectors="26" partofsingleimage="false" physical_partition_number="3" readbackverify="false" size_in_KB="104.0" sparse="false" start_byte_hex="0x6000" start_sector="6" />
+	<program SECTOR_SIZE_IN_BYTES="4096" file_sector_offset="0" filename="cdt.bin" label="cdt" num_partition_sectors="32" partofsingleimage="false" physical_partition_number="3" readbackverify="false" size_in_KB="128.0" sparse="false" start_byte_hex="0x20000" start_sector="32" />
+	<program SECTOR_SIZE_IN_BYTES="4096" file_sector_offset="0" filename="ddr.bin" label="ddr" num_partition_sectors="512" partofsingleimage="false" physical_partition_number="3" readbackverify="false" size_in_KB="2048.0" sparse="false" start_byte_hex="0x40000" start_sector="64" />
+	<program SECTOR_SIZE_IN_BYTES="4096" file_sector_offset="0" filename="gpt_main3.bin" label="PrimaryGPT" num_partition_sectors="6" partofsingleimage="true" physical_partition_number="3" readbackverify="false" size_in_KB="24.0" sparse="false" start_byte_hex="0x0" start_sector="0" />
+	<program SECTOR_SIZE_IN_BYTES="4096" file_sector_offset="0" filename="gpt_backup3.bin" label="BackupGPT" num_partition_sectors="5" partofsingleimage="true" physical_partition_number="3" readbackverify="false" size_in_KB="20.0" sparse="false" start_byte_hex="(4096*NUM_DISK_SECTORS)-20480." start_sector="NUM_DISK_SECTORS-5." />
+</data>
