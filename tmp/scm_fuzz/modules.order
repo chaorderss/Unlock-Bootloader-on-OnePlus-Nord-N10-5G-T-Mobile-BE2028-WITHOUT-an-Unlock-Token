@@ -7,3 +7,8 @@ kernel//work/wlan_probe.ko
 kernel//work/fuse_reader.ko
 kernel//work/msa_hijack.ko
 kernel//work/scm_pil_fuzz.ko
+kernel//work/scm_extargs.ko
+kernel//work/scm_ipa_cycle.ko
+kernel//work/scm_ipa_auth.ko
+kernel//work/scm_carveout_test.ko
+kernel//work/scm_meta_fuzz.ko

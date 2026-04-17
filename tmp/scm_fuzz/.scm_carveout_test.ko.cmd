@@ -1,0 +1,1 @@
+cmd_/work/scm_carveout_test.ko := aarch64-linux-gnu-ld -r  -EL  -maarch64elf -T ./scripts/module-common.lds -T ./arch/arm64/kernel/module.lds  --build-id  -o /work/scm_carveout_test.ko /work/scm_carveout_test.o /work/scm_carveout_test.mod.o ;  true

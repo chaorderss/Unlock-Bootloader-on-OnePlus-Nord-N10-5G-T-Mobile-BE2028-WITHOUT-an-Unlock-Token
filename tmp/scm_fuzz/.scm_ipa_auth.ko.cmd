@@ -1,0 +1,1 @@
+cmd_/work/scm_ipa_auth.ko := aarch64-linux-gnu-ld -r  -EL  -maarch64elf -T ./scripts/module-common.lds -T ./arch/arm64/kernel/module.lds  --build-id  -o /work/scm_ipa_auth.ko /work/scm_ipa_auth.o /work/scm_ipa_auth.mod.o ;  true

@@ -106,11 +106,15 @@ static int __init do_pas_init_image_nc(u32 peripheral, const void *data, size_t 
     phys_addr_t phys;
     struct scm_desc desc;
     int ret;
+    int order = get_order(size);
 
-    buf = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, 0);
+    buf = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, order);
     if (!buf) return -ENOMEM;
 
     memcpy(buf, data, size);
+
+    /* Flush CPU cache so TZ sees current data via physical address */
+    __dma_flush_area(buf, PAGE_SIZE << order);
 
     phys = virt_to_phys(buf);
 
@@ -119,11 +123,12 @@ static int __init do_pas_init_image_nc(u32 peripheral, const void *data, size_t 
     desc.args[0] = peripheral;
     desc.args[1] = phys;
 
-    pr_info("scm_fuzz5: init_image_nc pid=%u phys=0x%llx\n", peripheral, (u64)phys);
+    pr_info("scm_fuzz5: init_image_nc pid=%u phys=0x%llx size=%zu order=%d\n",
+            peripheral, (u64)phys, size, order);
     ret = scm_call2(0x42000201, &desc);
     pr_info("scm_fuzz5: init_image_nc ret=%d\n", ret);
 
-    free_pages((unsigned long)buf, 0);
+    free_pages((unsigned long)buf, order);
     return ret;
 }
 
@@ -345,7 +350,7 @@ static int __init scm_fuzz5_init(void)
 
             /* Must shutdown first to clean state */
             pr_info("scm_fuzz5: ELF[%d] calling shutdown...\n", test_id);
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             pr_info("scm_fuzz5: ELF[%d] shutdown done\n", test_id);
             msleep(5);
 
@@ -460,7 +465,7 @@ static int __init scm_fuzz5_init(void)
             }
 
             pr_info("scm_fuzz5: ELF[%d] >>> calling init_image...\n", test_id);
-            ret = do_pas_init_image(9, fuzz_buf, mdt_size);
+            ret = do_pas_init_image(pid_val, fuzz_buf, mdt_size);
             pr_info("scm_fuzz5: ELF[%d] <<< init_image ret=%d %s\n",
                     test_id, ret, ret == 0 ? "*** ACCEPTED ***" : "rejected");
             msleep(10);
@@ -501,7 +506,7 @@ elf_done:
             phdrs[1].p_type = 0;
             phdrs[1].p_flags = 0x02200000;
 
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             msleep(5);
 
             switch (test_id) {
@@ -587,7 +592,7 @@ elf_done:
                 goto int_done;
             }
 
-            ret = do_pas_init_image(9, buf, PAGE_SIZE);
+            ret = do_pas_init_image(pid_val, buf, PAGE_SIZE);
             pr_info("scm_fuzz5: INT[%d] init_image ret=%d %s\n",
                     test_id, ret, ret == 0 ? "*** ACCEPTED ***" : "rejected");
             msleep(10);
@@ -624,7 +629,7 @@ int_done:
         };
         int naddrs = sizeof(addrs) / sizeof(addrs[0]);
 
-        do_pas_shutdown(9);
+        do_pas_shutdown(pid_val);
         msleep(5);
 
         for (i = sub_test; i < naddrs && i < sub_test + max_tests; i++) {
@@ -685,7 +690,7 @@ int_done:
             if (!fuzz) break;
             memcpy(fuzz, mdt, mdt_size);
 
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             msleep(5);
 
             switch (test_id) {
@@ -765,9 +770,9 @@ int_done:
                     void *mini = kzalloc(PAGE_SIZE, GFP_KERNEL);
                     if (mini) {
                         build_base_elf((Elf32_Ehdr_t*)mini, 0);
-                        do_pas_shutdown(9);
+                        do_pas_shutdown(pid_val);
                         msleep(5);
-                        ret = do_pas_init_image(9, mini, PAGE_SIZE);
+                        ret = do_pas_init_image(pid_val, mini, PAGE_SIZE);
                         pr_info("scm_fuzz5: ROLL[%d] minimal_elf ret=%d %s\n",
                                 test_id, ret, ret == 0 ? "*** ACCEPTED ***" : "rejected");
                         kfree(mini);
@@ -782,7 +787,7 @@ int_done:
                 goto roll_done;
             }
 
-            ret = do_pas_init_image(9, fuzz, mdt_size);
+            ret = do_pas_init_image(pid_val, fuzz, mdt_size);
             pr_info("scm_fuzz5: ROLL[%d] init_image ret=%d %s\n",
                     test_id, ret, ret == 0 ? "*** ACCEPTED ***" : "rejected");
             kfree(fuzz);
@@ -891,73 +896,73 @@ type_done:;
         for (test_id = sub_test; test_id < sub_test + max_tests; test_id++) {
             switch (test_id) {
             case 0: /* Double shutdown */
-                do_pas_shutdown(9);
-                ret = do_pas_shutdown(9);
+                do_pas_shutdown(pid_val);
+                ret = do_pas_shutdown(pid_val);
                 pr_info("scm_fuzz5: STATE[%d] double_shutdown ret=%d\n", test_id, ret);
                 break;
             case 1: /* Init without shutdown (from running state) */
-                ret = do_pas_init_image(9, mdt, mdt_size);
+                ret = do_pas_init_image(pid_val, mdt, mdt_size);
                 pr_info("scm_fuzz5: STATE[%d] init_no_shutdown ret=%d\n", test_id, ret);
                 break;
             case 2: /* Auth without init or mem_setup */
-                do_pas_shutdown(9);
-                ret = do_pas_auth_reset(9);
+                do_pas_shutdown(pid_val);
+                ret = do_pas_auth_reset(pid_val);
                 pr_info("scm_fuzz5: STATE[%d] auth_no_init ret=%d\n", test_id, ret);
                 break;
             case 3: /* Mem_setup without init */
-                do_pas_shutdown(9);
-                ret = do_pas_mem_setup(9, 0x86a00000, 0x500000);
+                do_pas_shutdown(pid_val);
+                ret = do_pas_mem_setup(pid_val, 0x86a00000, 0x500000);
                 pr_info("scm_fuzz5: STATE[%d] mem_no_init ret=%d\n", test_id, ret);
                 break;
             case 4: /* Double init_image (valid both times) */
-                do_pas_shutdown(9);
-                do_pas_init_image(9, mdt, mdt_size);
-                ret = do_pas_init_image(9, mdt, mdt_size);
+                do_pas_shutdown(pid_val);
+                do_pas_init_image(pid_val, mdt, mdt_size);
+                ret = do_pas_init_image(pid_val, mdt, mdt_size);
                 pr_info("scm_fuzz5: STATE[%d] double_init ret=%d\n", test_id, ret);
                 break;
             case 5: /* Init for different PIDs without shutdown */
-                do_pas_shutdown(9);
-                do_pas_init_image(9, mdt, mdt_size);
+                do_pas_shutdown(pid_val);
+                do_pas_init_image(pid_val, mdt, mdt_size);
                 /* Now try init for ADSP (PID=4) without shutting down venus */
                 ret = do_pas_init_image(4, mdt, mdt_size);
                 pr_info("scm_fuzz5: STATE[%d] cross_pid_init ret=%d\n", test_id, ret);
                 break;
             case 6: /* Auth for wrong PID after venus init */
-                do_pas_shutdown(9);
-                do_pas_init_image(9, mdt, mdt_size);
-                do_pas_mem_setup(9, 0x86a00000, 0x500000);
+                do_pas_shutdown(pid_val);
+                do_pas_init_image(pid_val, mdt, mdt_size);
+                do_pas_mem_setup(pid_val, 0x86a00000, 0x500000);
                 ret = do_pas_auth_reset(4); /* ADSP instead of venus */
                 pr_info("scm_fuzz5: STATE[%d] auth_wrong_pid ret=%d\n", test_id, ret);
                 break;
             case 7: /* Mem_setup with wrong PID */
-                do_pas_shutdown(9);
-                do_pas_init_image(9, mdt, mdt_size);
+                do_pas_shutdown(pid_val);
+                do_pas_init_image(pid_val, mdt, mdt_size);
                 ret = do_pas_mem_setup(4, 0x86a00000, 0x500000);
                 pr_info("scm_fuzz5: STATE[%d] mem_wrong_pid ret=%d\n", test_id, ret);
                 break;
             case 8: /* Shutdown a different PID mid-sequence */
-                do_pas_shutdown(9);
-                do_pas_init_image(9, mdt, mdt_size);
-                do_pas_mem_setup(9, 0x86a00000, 0x500000);
+                do_pas_shutdown(pid_val);
+                do_pas_init_image(pid_val, mdt, mdt_size);
+                do_pas_mem_setup(pid_val, 0x86a00000, 0x500000);
                 ret = do_pas_shutdown(4); /* shutdown ADSP */
                 pr_info("scm_fuzz5: STATE[%d] shutdown_other ret=%d\n", test_id, ret);
                 /* Then try auth on venus */
-                ret = do_pas_auth_reset(9);
+                ret = do_pas_auth_reset(pid_val);
                 pr_info("scm_fuzz5: STATE[%d] auth_after_other_shutdown ret=%d\n", test_id, ret);
                 break;
             case 9: /* Triple mem_setup with different params */
-                do_pas_shutdown(9);
-                do_pas_init_image(9, mdt, mdt_size);
-                do_pas_mem_setup(9, 0x86a00000, 0x500000);
-                do_pas_mem_setup(9, 0x86a00000, 0x100000); /* smaller */
-                ret = do_pas_mem_setup(9, 0x88d00000, 0x500000); /* ADSP region */
+                do_pas_shutdown(pid_val);
+                do_pas_init_image(pid_val, mdt, mdt_size);
+                do_pas_mem_setup(pid_val, 0x86a00000, 0x500000);
+                do_pas_mem_setup(pid_val, 0x86a00000, 0x100000); /* smaller */
+                ret = do_pas_mem_setup(pid_val, 0x88d00000, 0x500000); /* ADSP region */
                 pr_info("scm_fuzz5: STATE[%d] triple_mem ret=%d\n", test_id, ret);
                 break;
             case 10: /* Init → mem_setup with modem region → auth */
-                do_pas_shutdown(9);
-                do_pas_init_image(9, mdt, mdt_size);
-                do_pas_mem_setup(9, 0x8b800000, 0x500000); /* modem region! */
-                ret = do_pas_auth_reset(9);
+                do_pas_shutdown(pid_val);
+                do_pas_init_image(pid_val, mdt, mdt_size);
+                do_pas_mem_setup(pid_val, 0x8b800000, 0x500000); /* modem region! */
+                ret = do_pas_auth_reset(pid_val);
                 pr_info("scm_fuzz5: STATE[%d] auth_modem_region ret=%d %s\n",
                         test_id, ret, ret == 0 ? "*** REGION CONFUSION ***" : "");
                 break;
@@ -984,25 +989,25 @@ state_done:
         if (!mdt) { pr_err("scm_fuzz5: cannot read %s\n", meta_path); return -ENOENT; }
 
         /* Shutdown both venus and attempt with ADSP */
-        do_pas_shutdown(9);
+        do_pas_shutdown(pid_val);
         do_pas_shutdown(4);
         msleep(10);
 
         /* Init venus */
-        ret = do_pas_init_image(9, mdt, mdt_size);
+        ret = do_pas_init_image(pid_val, mdt, mdt_size);
         pr_info("scm_fuzz5: OVERLAP venus init ret=%d\n", ret);
 
         /* Try to setup venus mem pointing to ADSP region */
-        ret = do_pas_mem_setup(9, 0x88d00000, 0x500000);
+        ret = do_pas_mem_setup(pid_val, 0x88d00000, 0x500000);
         pr_info("scm_fuzz5: OVERLAP venus mem=adsp_region ret=%d\n", ret);
 
         /* Try auth - if it works, venus runs in ADSP memory! */
-        ret = do_pas_auth_reset(9);
+        ret = do_pas_auth_reset(pid_val);
         pr_info("scm_fuzz5: OVERLAP venus auth ret=%d %s\n",
                 ret, ret == 0 ? "*** OVERLAP SUCCESS ***" : "rejected");
 
         /* Clean up */
-        do_pas_shutdown(9);
+        do_pas_shutdown(pid_val);
         kfree(mdt);
     }
     break;
@@ -1146,7 +1151,7 @@ modem_done:;
             size_t alloc_size;
             void *buf;
 
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             msleep(5);
 
             switch (test_id) {
@@ -1185,7 +1190,7 @@ modem_done:;
                 memset(buf + 52, 0x41, alloc_size - 52);
             }
 
-            ret = do_pas_init_image(9, buf, alloc_size);
+            ret = do_pas_init_image(pid_val, buf, alloc_size);
             pr_info("scm_fuzz5: LARGE[%d] size=%zu ret=%d %s\n",
                     test_id, alloc_size, ret,
                     ret == 0 ? "*** ACCEPTED ***" : "rejected");
@@ -1228,7 +1233,7 @@ large_done:;
         if (sub_test == 1) {
             /* kzalloc + shutdown only */
             pr_info("scm_fuzz5: DBG10 calling shutdown(9)...\n");
-            ret = do_pas_shutdown(9);
+            ret = do_pas_shutdown(pid_val);
             pr_info("scm_fuzz5: DBG10 shutdown ret=%d\n", ret);
             kfree(buf);
             break;
@@ -1267,7 +1272,7 @@ large_done:;
             struct scm_desc direct_desc;
 
             pr_info("scm_fuzz5: DBG10 sub3 shutdown first...\n");
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             msleep(200); /* delay after shutdown like scm_fuzz4's rmmod/insmod gap */
 
             direct_buf = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, 0);
@@ -1310,9 +1315,9 @@ large_done:;
             pr_info("scm_fuzz5: DBG10 dma_buf phys=0x%llx\n",
                     (u64)virt_to_phys(dma_buf));
             pr_info("scm_fuzz5: DBG10 shutdown...\n");
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             pr_info("scm_fuzz5: DBG10 init_image real mdt...\n");
-            ret = do_pas_init_image(9, dma_buf, mdt_size);
+            ret = do_pas_init_image(pid_val, dma_buf, mdt_size);
             pr_info("scm_fuzz5: DBG10 init_image real ret=%d\n", ret);
             kfree(dma_buf);
             kfree(buf);
@@ -1336,9 +1341,9 @@ large_done:;
             /* Modify: set phnum=0 */
             ((Elf32_Ehdr_t *)dma_buf)->e_phnum = 0;
             pr_info("scm_fuzz5: DBG10 shutdown...\n");
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             pr_info("scm_fuzz5: DBG10 init_image real+phnum=0...\n");
-            ret = do_pas_init_image(9, dma_buf, mdt_size);
+            ret = do_pas_init_image(pid_val, dma_buf, mdt_size);
             pr_info("scm_fuzz5: DBG10 init_image real+phnum=0 ret=%d\n", ret);
             kfree(dma_buf);
             kfree(buf);
@@ -1350,7 +1355,7 @@ large_done:;
         /* sub_test=6: test do_pas_init_image wrapper WITHOUT shutdown */
         if (sub_test == 6) {
             pr_info("scm_fuzz5: DBG10 sub6 wrapper init_image (no shutdown)...\n");
-            ret = do_pas_init_image(9, buf, PAGE_SIZE);
+            ret = do_pas_init_image(pid_val, buf, PAGE_SIZE);
             pr_info("scm_fuzz5: DBG10 sub6 ret=%d\n", ret);
             kfree(buf);
             break;
@@ -1445,7 +1450,7 @@ large_done:;
                         desc.__pad[j] != 0xAAAAAAAAAAAAAAAAULL ? " <<MODIFIED" : "");
 
             /* Cleanup */
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             free_pages((unsigned long)scm_buf, 0);
             kfree(buf);
             break;
@@ -1547,7 +1552,7 @@ large_done:;
 
             /* --- Test 3: PAS init_image with argcount=5
              * Real 2-arg call but faking 5 args to trigger ext path */
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             memset(ext_buf, 0x77, PAGE_SIZE);
             memset(&desc, 0xDD, sizeof(desc));
             desc.arginfo = 5 | (0 << 4) | (2 << 6) | (0 << 8) | (0 << 10) | (0 << 12);
@@ -1575,7 +1580,7 @@ large_done:;
                         ep[0], ep[1], ep[2], ep[3]);
             }
 
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             free_pages((unsigned long)ext_buf, 0);
             kfree(buf);
             break;
@@ -1632,9 +1637,9 @@ large_done:;
             pr_info("scm_fuzz5: EXTPAS loaded venus.mdt %zu bytes\n", meta_size);
 
             /* Baseline: init_image with real mdt */
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             msleep(100);
-            ret = do_pas_init_image(9, meta_buf, meta_size);
+            ret = do_pas_init_image(pid_val, meta_buf, meta_size);
             pr_info("scm_fuzz5: EXTPAS baseline init ret=%d\n", ret);
 
             if (ret == 0) {
@@ -1646,7 +1651,7 @@ large_done:;
                 ret = scm_call2(SCM_SIP_FNID(PAS_SVC, PAS_AUTH_AND_RESET_CMD), &desc);
                 pr_info("scm_fuzz5: EXTPAS auth baseline ret=%d r0=0x%llx\n",
                         ret, desc.ret[0]);
-                do_pas_shutdown(9);
+                do_pas_shutdown(pid_val);
             }
             kfree(meta_buf);
             kfree(buf);
@@ -1676,9 +1681,9 @@ large_done:;
                 {4, 1, 1, 1, "a1-a3=1"},
             };
             for (t = 0; t < ARRAY_SIZE(auth_tests); t++) {
-                do_pas_shutdown(9);
+                do_pas_shutdown(pid_val);
                 msleep(50);
-                ret = do_pas_init_image(9, meta_buf, meta_size);
+                ret = do_pas_init_image(pid_val, meta_buf, meta_size);
                 if (ret != 0) {
                     pr_info("scm_fuzz5: EXTPAS auth[%d] init failed=%d\n", t, ret);
                     continue;
@@ -1693,7 +1698,7 @@ large_done:;
                 ret = scm_call2(SCM_SIP_FNID(PAS_SVC, PAS_AUTH_AND_RESET_CMD), &desc);
                 pr_info("scm_fuzz5: EXTPAS auth %s ret=%d r0=0x%llx\n",
                         auth_tests[t].label, ret, desc.ret[0]);
-                do_pas_shutdown(9);
+                do_pas_shutdown(pid_val);
             }
             kfree(meta_buf);
             kfree(buf);
@@ -1710,9 +1715,9 @@ large_done:;
             meta_buf = read_file_buf("/tmp/fw_meta.bin", &meta_size);
             if (!meta_buf) { kfree(buf); break; }
 
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             msleep(50);
-            ret = do_pas_init_image(9, meta_buf, meta_size);
+            ret = do_pas_init_image(pid_val, meta_buf, meta_size);
             pr_info("scm_fuzz5: EXTPAS mem_test init ret=%d\n", ret);
 
             if (ret == 0) {
@@ -1742,7 +1747,7 @@ large_done:;
                             mem_tests[t].label, ret, desc.ret[0]);
                 }
             }
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             kfree(meta_buf);
             kfree(buf);
             break;
@@ -1893,9 +1898,9 @@ large_done:;
             if (!meta_buf) { kfree(buf); break; }
 
             /* Step 1: shutdown + init */
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             msleep(100);
-            ret = do_pas_init_image(9, meta_buf, meta_size);
+            ret = do_pas_init_image(pid_val, meta_buf, meta_size);
             pr_info("scm_fuzz5: FULLCYC init ret=%d\n", ret);
             if (ret != 0) { kfree(meta_buf); kfree(buf); break; }
 
@@ -1952,7 +1957,7 @@ large_done:;
                 iounmap(fw_mem);
             }
 
-            do_pas_shutdown(9);
+            do_pas_shutdown(pid_val);
             kfree(meta_buf);
             kfree(buf);
             break;
@@ -2146,9 +2151,9 @@ large_done:;
             /* Test after init_image */
             meta_buf = read_file_buf("/tmp/fw_meta.bin", &meta_size);
             if (meta_buf) {
-                do_pas_shutdown(9);
+                do_pas_shutdown(pid_val);
                 msleep(50);
-                do_pas_init_image(9, meta_buf, meta_size);
+                do_pas_init_image(pid_val, meta_buf, meta_size);
 
                 pr_info("scm_fuzz5: CMD8 === After init_image ===\n");
                 memset(&desc, 0, sizeof(desc));
@@ -2185,7 +2190,7 @@ large_done:;
                         "r0=0x%llx r1=0x%llx\n",
                         ret, desc.ret[0], desc.ret[1]);
 
-                do_pas_shutdown(9);
+                do_pas_shutdown(pid_val);
                 kfree(meta_buf);
             }
             break;

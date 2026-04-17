@@ -1,0 +1,1 @@
+cmd_/work/scm_extargs.ko := aarch64-linux-gnu-ld -r  -EL  -maarch64elf -T ./scripts/module-common.lds -T ./arch/arm64/kernel/module.lds  --build-id  -o /work/scm_extargs.ko /work/scm_extargs.o /work/scm_extargs.mod.o ;  true

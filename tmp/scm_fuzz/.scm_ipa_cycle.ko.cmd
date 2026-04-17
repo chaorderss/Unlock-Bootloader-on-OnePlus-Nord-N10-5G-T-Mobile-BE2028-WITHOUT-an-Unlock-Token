@@ -1,0 +1,1 @@
+cmd_/work/scm_ipa_cycle.ko := aarch64-linux-gnu-ld -r  -EL  -maarch64elf -T ./scripts/module-common.lds -T ./arch/arm64/kernel/module.lds  --build-id  -o /work/scm_ipa_cycle.ko /work/scm_ipa_cycle.o /work/scm_ipa_cycle.mod.o ;  true
